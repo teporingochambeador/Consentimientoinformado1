@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <title>Consentimiento informado</title>
+    <script src="https://unpkg.com/jspsych@7.3.3/dist/jspsych.js"></script>
+    <script src="https://unpkg.com/jspsych@7.3.3/dist/plugins/plugin-html-button-response.js"></script>
+    <link href="https://unpkg.com/jspsych@7.3.3/css/jspsych.css" rel="stylesheet" />
+
+    <style>
+      body {
+        background-color: #f8f9fa;
+        font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+
+      .consent-container {
+        background-color: white;
+        padding: 40px 50px;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        max-width: 600px;
+        text-align: left;
+      }
+
+      .consent-container h2 {
+        text-align: center;
+        color: #333;
+      }
+
+      .consent-container p {
+        color: #444;
+        line-height: 1.6;
+        font-size: 16px;
+      }
+
+      label {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 15px;
+        font-weight: 500;
+      }
+
+      input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+      }
+
+      button.jspsych-btn {
+        background-color: #1976d2;
+        color: white;
+        border: none;
+        padding: 10px 25px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+        margin-top: 25px;
+        transition: background-color 0.3s;
+      }
+
+      button.jspsych-btn:disabled {
+        background-color: #cfd8dc;
+        cursor: not-allowed;
+      }
+
+      button.jspsych-btn:hover:enabled {
+        background-color: #1565c0;
+      }
+    </style>
+  </head>
+
+  <body>
+    <script>
+      const jsPsych = initJsPsych({
+        on_finish: () => jsPsych.data.displayData()
+      });
+
+      const consentimiento = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: `
+          <div class="consent-container">
+            <h2>Consentimiento informado</h2>
+            <p>Estás invitado(a) a participar en un estudio sobre percepción visual. 
+            Tu participación es completamente voluntaria y puedes retirarte en cualquier momento sin consecuencias.</p>
+
+            <p>Al marcar la casilla a continuación, confirmas que has leído y comprendido la información, y aceptas participar.</p>
+
+            <label>
+              <input type="checkbox" id="consent_checkbox" />
+              Sí, acepto participar en el estudio.
+            </label>
+          </div>
+        `,
+        choices: ['Comenzar'],
+        on_load: () => {
+          const btn = document.querySelector('button');
+          btn.disabled = true;
+          document.getElementById('consent_checkbox').addEventListener('change', e => {
+            btn.disabled = !e.target.checked;
+          });
+        }
+      };
+
+      const bienvenida = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: `<p><strong>¡Gracias!</strong><br>El experimento comenzará enseguida.</p>`,
+        choices: ["Continuar"]
+      };
+
+      jsPsych.run([consentimiento, bienvenida]);
+    </script>
+  </body>
+</html>
